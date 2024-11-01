@@ -1,13 +1,15 @@
 // ProductCard.js
-import React from 'react';
+import React, {useState} from 'react';
 import './ProductCard.css'; // Các style tùy chỉnh của bạn
 import {Link} from 'react-router-dom';
 import RefreshToken from "../common/refresh-token/RefreshToken";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const addToCart = async (product, quantity, navigate) => {
     try {
         let accessToken = localStorage.getItem('access_token');
         const cartId = localStorage.getItem('cartId');
-
+        console.log("access_token" + accessToken);
         if (!accessToken) {
             navigate('/login');
             return;
@@ -18,7 +20,7 @@ const addToCart = async (product, quantity, navigate) => {
             productId: product.id,
             quantity: quantity
         };
-
+        console.log("bodyData", JSON.stringify(bodyData));
         const response = await fetch(`${process.env.REACT_APP_API_URL}/cart-item/`, {
             method: 'POST',
             headers: {
@@ -30,6 +32,15 @@ const addToCart = async (product, quantity, navigate) => {
 
         if (response.ok) {
             console.log("Product added to cart successfully!");
+            toast.success("Đã vào giỏ hàng thành công!", {
+                position: "top-center", // Vị trí giữa màn hình
+                autoClose: 3000,        // Tự động ẩn sau 3 giây
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                theme: "colored"
+            });
         } else if (response.status === 401) {
             console.log("Token expiration!");
 
@@ -42,13 +53,22 @@ const addToCart = async (product, quantity, navigate) => {
         } else {
             const errorData = await response.json();
             console.error("Failed to add product to cart:", errorData.message);
+            toast.error("Thêm vào giỏ hàng thất bại!", {
+                position: "top-center", // Vị trí giữa màn hình
+                autoClose: 3000,        // Tự động ẩn sau 3 giây
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                theme: "colored"
+            });
         }
     } catch (error) {
         console.error("Error adding product to cart:", error);
     }
 };
 
-const ProductCard = ({ product, navigate }) => {
+const ProductCard = ({ product, navigate}) => {
     const handleAddToCart = () => {
         const quantity = 1;  // Giả sử muốn thêm 1 sản phẩm vào giỏ hàng
         addToCart(product, quantity, navigate);
@@ -81,9 +101,12 @@ const ProductCard = ({ product, navigate }) => {
                     >
                         + Add
                     </button>
+
                 </div>
             </div>
+
         </div>
+
     );
 };
 

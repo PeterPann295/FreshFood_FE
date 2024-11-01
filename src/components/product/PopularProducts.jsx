@@ -2,6 +2,9 @@
 import React, {useState, useEffect} from 'react';
 import ProductCard from './ProductCard';
 import axios from 'axios';
+import ReactDOM from 'react-dom';
+import { useNavigate } from 'react-router-dom';
+import { Alert, Button } from 'react-bootstrap';
 // const products = [
 //     {
 //         name: "Haldiram's Sev Bhujia",
@@ -26,6 +29,8 @@ import axios from 'axios';
 //     },
 //     // Thêm các sản phẩm khác
 // ];
+import './ProductCard.css';
+import {ToastContainer} from "react-toastify"; // Các style tùy chỉnh của bạn
 
 const PopularProducts = () => {
     const [products, setProducts] = useState([]);
@@ -50,15 +55,23 @@ const PopularProducts = () => {
             console.error("There was an error fetching the products!", error);
         })
     },[])
+    const navigate = useNavigate();
     return (
+        <>
         <div className="container">
+
             <h2 className="my-4">Popular Products</h2>
             <div className="row">
                 {products.map((product, index) => (
-                    <ProductCard key={index} product={product} />
+                    <ProductCard key={index} product={product} navigate={navigate}  />
                 ))}
             </div>
+            <ToastContainer />
+
+
         </div>
+
+        </>
     );
 };
 

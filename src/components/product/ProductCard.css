@@ -18,3 +18,13 @@
 /*    color: black;*/
 /*    text-decoration: none;*/
 /*}*/
+.centered-alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
