@@ -7,6 +7,7 @@ import Login from "../components/login-account/Login";
 import RefreshToken from "../components/common/refresh-token/RefreshToken";
 import TestRefreshToken from "../components/common/refresh-token/TestRefreshToken";
 import ProductFilter from "../components/product-filter/ProductFilter";
+import Cart from "../components/cart/Cart";
 export const Router = createBrowserRouter([
     {
 
@@ -35,6 +36,10 @@ export const Router = createBrowserRouter([
             ,{
                 path: "product-filter",
                 element: <ProductFilter/>
+            }
+            ,{
+                path: "cart",
+                element: <Cart/>
             }
 
         ]

@@ -1,8 +1,64 @@
-import React from 'react';
+import React, {useState, useContext, useEffect} from 'react';
+import {useNavigate} from "react-router-dom";
 import { Container, Navbar, Nav, NavDropdown, Form, FormControl, Button } from 'react-bootstrap';
 import { FaShoppingCart, FaUser, FaHeart } from 'react-icons/fa';
 import './header.css'
+import {toast} from "react-toastify";
+import RefreshToken from "../refresh-token/RefreshToken";
+import {UserContext} from "../../../contexts/UserContext";
+import axios from 'axios';
 const Header = () => {
+    const navigate = useNavigate();
+    const { isLoggedIn, cartUpdated } = useContext(UserContext);
+    const [quantityCart, setQuantityCart] = useState(0);
+    console.log("Da dang nhap " + isLoggedIn)
+    const  getQuantityCart  = async () => {
+        try {
+            let accessToken = localStorage.getItem('access_token');
+            const cartId = localStorage.getItem('cartId');
+            console.log("access_token" + accessToken);
+            if (!accessToken) {
+                navigate('/login');
+                return;
+            }
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/cart/get-quantity/${cartId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+            if (response.status === 200) {
+                setQuantityCart(response.data.data); // Lấy giá trị quantity từ data
+            } else {
+                console.error("Failed to get quantity");
+            }
+            // if (response.ok) {
+            //     setQuantityCart(response.data.data)
+            //     console.log("Data lay duoc:" + response.data.data)
+            // } else if (response.status === 401) {
+            //     console.log("Token expiration!");
+            //
+            //     // Token hết hạn hoặc không hợp lệ, gọi hàm refresh token
+            //     accessToken = await RefreshToken(navigate);
+            //     if (accessToken) {
+            //         // Thử lại sau khi refresh token
+            //         await getQuantityCart(navigate);
+            //     }
+            // } else {
+            //     const errorData = await response.json();
+            //     console.error("Failed to load quantity cart:", errorData.message);
+            //
+            // }
+        } catch (error) {
+            console.error("Error adding product to cart:", error);
+        }
+    };
+    useEffect(() => {
+        if (isLoggedIn) {
+            getQuantityCart();
+        }
+    }, [isLoggedIn, cartUpdated]);  //
+
     return (
         <header>
             {/* Top bar with coupon and language */}
@@ -49,7 +105,7 @@ const Header = () => {
                             <FaUser />
                         </Nav.Link>
                         <Nav.Link href="/cart">
-                            <FaShoppingCart /> <span className="badge bg-success">1</span>
+                            <FaShoppingCart /> <span className="badge bg-success">{quantityCart}</span>
                         </Nav.Link>
                     </Nav>
                 </Container>

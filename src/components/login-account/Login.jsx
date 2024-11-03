@@ -1,7 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import "../register-account/register.css"
 import {useNavigate} from "react-router-dom";
+import {UserContext} from "../../contexts/UserContext";
+
 const Login = () => {
+    const { loginUser } = useContext(UserContext);
+
     const [formData, setFormData] = useState({
         username: "",
         password: ""
@@ -24,7 +28,6 @@ const Login = () => {
             })
             if (response.ok) {
                 const result = await response.json();
-
                 // Lưu token và thông tin người dùng vào localStorage
                 localStorage.setItem('access_token', result.accessToken);
                 localStorage.setItem('refresh_token', result.refreshToken);
@@ -32,6 +35,7 @@ const Login = () => {
                 localStorage.setItem('userId', result.userId);
                 localStorage.setItem('username', result.username);
                 localStorage.setItem("cartId", result.cartId)
+                loginUser();
                 navigate("/");
                 // Bạn có thể thêm các hành động khác, ví dụ điều hướng tới trang khác
             } else {
